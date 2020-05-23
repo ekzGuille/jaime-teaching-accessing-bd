@@ -49,6 +49,11 @@ public class Paciente {
         this.totalVisitas = totalVisitas;
     }
 
+    public Paciente totalVisitas(Integer totalVisitas) {
+        this.totalVisitas = totalVisitas;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Paciente{" +
