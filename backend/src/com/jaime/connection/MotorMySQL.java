@@ -11,6 +11,6 @@ public class MotorMySQL extends MotorImpl {
     this.urlDB = DRIVER + HOST + "/" + BDNAME + TIMEZONE;
     this.userDB = "root";
     this.passDB = "admin";
-    this.driverDB = "com.mysql.jdbc.Driver";
+    this.driverDB = "com.mysql.cj.jdbc.Driver"; // Old driver name: "com.mysql.jdbc.Driver";
   }
 }
