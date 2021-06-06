@@ -5,12 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public interface Motor {
-    public Connection connect();
+  Connection connect();
 
-    public int execute(PreparedStatement pst);
+  int execute(PreparedStatement pst);
 
-    public ResultSet executeQuery(PreparedStatement pst);
+  ResultSet executeQuery(PreparedStatement pst);
 
-    public void disconnect();
+  void disconnect();
 
 }

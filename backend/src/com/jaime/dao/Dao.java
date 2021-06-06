@@ -12,14 +12,14 @@ public interface Dao<E, I> {
             Delete
      */
 
-    int create(E bean);
+  int create(E bean);
 
-    ArrayList<E> findAll();
+  ArrayList<E> findAll();
 
-    E findById(I id);
+  E findById(I id);
 
-    int update(E bean);
+  int update(E bean);
 
-    int delete(I id);
+  int delete(I id);
 
 }

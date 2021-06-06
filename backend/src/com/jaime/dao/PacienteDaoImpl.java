@@ -11,147 +11,147 @@ import java.util.ArrayList;
 
 public class PacienteDaoImpl implements Dao<Paciente, String> {
 
-    private PreparedStatement pst;
-    private MotorImpl motor;
+  private PreparedStatement pst;
+  private final MotorImpl motor;
 
-    /* Comienzo patron singleton */
-    private static PacienteDaoImpl d;
+  /* Comienzo patron singleton */
+  private static PacienteDaoImpl d;
 
-    private PacienteDaoImpl() {
-        motor = new MotorMySQL();
+  private PacienteDaoImpl() {
+    motor = new MotorMySQL();
+  }
+
+  public static PacienteDaoImpl getInstance() {
+    if (d == null) {
+      d = new PacienteDaoImpl();
+    }
+    return d;
+  }
+  /* Fin patron singleton */
+
+  @Override
+  public int create(Paciente bean) {
+    String sql = "INSERT INTO `paciente` (`num_seg_soc`, `nombre`, `total_visitas`) VALUES (?, ?, ?)";
+    int response = 0;
+
+    try {
+      pst = this.motor.connect().prepareStatement(sql);
+      pst.setString(1, bean.getNumSegSoc());
+      pst.setString(2, bean.getNombre());
+      pst.setInt(3, bean.getTotalVisitas());
+
+      response = this.motor.execute(pst);
+    } catch (SQLException e) {
+
+    } finally {
+      motor.disconnect();
     }
 
-    public static PacienteDaoImpl getInstance() {
-        if (d == null) {
-            d = new PacienteDaoImpl();
-        }
-        return d;
-    }
-    /* Fin patron singleton */
+    return response;
+  }
 
-    @Override
-    public int create(Paciente bean) {
-        String sql = "INSERT INTO `paciente` (`num_seg_soc`, `nombre`, `total_visitas`) VALUES (?, ?, ?)";
-        int response = 0;
+  @Override
+  public ArrayList<Paciente> findAll() {
+    String sql = "SELECT * FROM `paciente`";
+    ArrayList<Paciente> lstPacientes = null;
 
-        try {
-            pst = this.motor.connect().prepareStatement(sql);
-            pst.setString(1, bean.getNumSegSoc());
-            pst.setString(2, bean.getNombre());
-            pst.setInt(3, bean.getTotalVisitas());
+    try {
 
-            response = this.motor.execute(pst);
-        } catch (SQLException e) {
+      pst = this.motor.connect().prepareStatement(sql);
+      ResultSet rs = pst.executeQuery();
+      lstPacientes = new ArrayList<>();
 
-        } finally {
-            motor.disconnect();
-        }
+      while (rs.next()) {
+        Paciente p = new Paciente();
+        p.setNumSegSoc(rs.getString(1));
+        p.setNombre(rs.getString(2));
+        p.setTotalVisitas(rs.getInt(3));
 
-        return response;
-    }
+        lstPacientes.add(p);
+      }
 
-    @Override
-    public ArrayList<Paciente> findAll() {
-        String sql = "SELECT * FROM `paciente`";
-        ArrayList<Paciente> lstPacientes = null;
+    } catch (SQLException e) {
 
-        try {
-
-            pst = this.motor.connect().prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-            lstPacientes = new ArrayList<>();
-
-            while (rs.next()) {
-                Paciente p = new Paciente();
-                p.setNumSegSoc(rs.getString(1));
-                p.setNombre(rs.getString(2));
-                p.setTotalVisitas(rs.getInt(3));
-
-                lstPacientes.add(p);
-            }
-
-        } catch (SQLException e) {
-
-        } finally {
-            motor.disconnect();
-        }
-
-        return lstPacientes;
+    } finally {
+      motor.disconnect();
     }
 
-    @Override
-    public Paciente findById(String id) {
+    return lstPacientes;
+  }
 
-        String sql = "SELECT * FROM `paciente` WHERE `num_seg_soc` = ?";
-        ArrayList<Paciente> lstPacientes = null;
+  @Override
+  public Paciente findById(String id) {
 
-        try {
+    String sql = "SELECT * FROM `paciente` WHERE `num_seg_soc` = ?";
+    ArrayList<Paciente> lstPacientes = null;
 
-            pst = this.motor.connect().prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-            lstPacientes = new ArrayList<>();
+    try {
 
-            while (rs.next()) {
-                Paciente p = new Paciente();
-                p.setNumSegSoc(rs.getString(1));
-                p.setNombre(rs.getString(2));
-                p.setTotalVisitas(rs.getInt(3));
+      pst = this.motor.connect().prepareStatement(sql);
+      ResultSet rs = pst.executeQuery();
+      lstPacientes = new ArrayList<>();
 
-                lstPacientes.add(p);
-            }
+      while (rs.next()) {
+        Paciente p = new Paciente();
+        p.setNumSegSoc(rs.getString(1));
+        p.setNombre(rs.getString(2));
+        p.setTotalVisitas(rs.getInt(3));
 
-        } catch (SQLException e) {
+        lstPacientes.add(p);
+      }
 
-        } finally {
-            motor.disconnect();
-        }
+    } catch (SQLException e) {
 
-        Paciente p = null;
-
-        if (lstPacientes != null && !lstPacientes.isEmpty()) {
-            p = lstPacientes.get(0);
-        }
-        return p;
+    } finally {
+      motor.disconnect();
     }
 
-    @Override
-    public int update(Paciente bean) {
-        String sql = "UPDATE `paciente` SET `nombre` = ?, `total_visitas` =  ? WHERE `num_seg_soc` = ?";
-        int response = 0;
+    Paciente p = null;
 
-        try {
-            pst = this.motor.connect().prepareStatement(sql);
-            pst.setString(1, bean.getNombre());
-            pst.setInt(2, bean.getTotalVisitas());
-            pst.setString(3, bean.getNumSegSoc());
+    if (lstPacientes != null && !lstPacientes.isEmpty()) {
+      p = lstPacientes.get(0);
+    }
+    return p;
+  }
 
-            response = this.motor.execute(pst);
+  @Override
+  public int update(Paciente bean) {
+    String sql = "UPDATE `paciente` SET `nombre` = ?, `total_visitas` =  ? WHERE `num_seg_soc` = ?";
+    int response = 0;
 
-        } catch (SQLException e) {
+    try {
+      pst = this.motor.connect().prepareStatement(sql);
+      pst.setString(1, bean.getNombre());
+      pst.setInt(2, bean.getTotalVisitas());
+      pst.setString(3, bean.getNumSegSoc());
 
-        } finally {
-            this.motor.disconnect();
-        }
-        return response;
+      response = this.motor.execute(pst);
+
+    } catch (SQLException e) {
+
+    } finally {
+      this.motor.disconnect();
+    }
+    return response;
+  }
+
+  @Override
+  public int delete(String id) {
+    String sql = "DELETE FROM `paciente` WHERE `num_seg_soc` = ?";
+    int response = 0;
+
+    try {
+      pst = this.motor.connect().prepareStatement(sql);
+      pst.setString(1, id);
+
+      response = this.motor.execute(pst);
+
+    } catch (SQLException e) {
+
+    } finally {
+      this.motor.disconnect();
     }
 
-    @Override
-    public int delete(String id) {
-        String sql = "DELETE FROM `paciente` WHERE `num_seg_soc` = ?";
-        int response = 0;
-
-        try {
-            pst = this.motor.connect().prepareStatement(sql);
-            pst.setString(1, id);
-
-            response = this.motor.execute(pst);
-
-        } catch (SQLException e) {
-
-        } finally {
-            this.motor.disconnect();
-        }
-
-        return response;
-    }
+    return response;
+  }
 }
